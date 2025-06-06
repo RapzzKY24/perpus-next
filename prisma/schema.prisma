@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Model untuk Buku
+model Buku {
+  id             String       @id @default(cuid())
+  judul          String
+  penulis        String
+  penerbit       String
+  tahunTerbit    Int
+  isbn           String       @unique
+  deskripsi      String?      @db.Text
+  jumlahStok     Int          @default(1)
+  jumlahTersedia Int          @default(1)
+  gambarUrl      String?
+
+  // Relasi ke model lain
+  kategori       Kategori[]
+  peminjaman     Peminjaman[]
+
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+}
+
+
+model Kategori {
+  id   String @id @default(cuid())
+  nama String @unique
+
+  buku Buku[]
+}
+
+model Peminjaman {
+  id              String           @id @default(cuid())
+  tanggalPinjam   DateTime         @default(now())
+  tanggalJatuhTempo DateTime
+  tanggalKembali  DateTime?
+  status          StatusPeminjaman @default(DIPINJAM)
+
+
+  userId          String
+  bukuId          String
+
+
+  peminjam        User             @relation(fields: [userId], references: [id])
+  buku            Buku             @relation(fields: [bukuId], references: [id])
+}
+
+enum StatusPeminjaman {
+  DIPINJAM
+  KEMBALI
+  TERLAMBAT
+}
+
+
+model User {
+  id         String       @id @default(cuid())
+  email      String       @unique
+  nama       String
+  peminjaman Peminjaman[]
+}
