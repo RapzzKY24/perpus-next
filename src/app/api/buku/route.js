@@ -1,33 +1,61 @@
 import prisma from "@/libs/prisma";
 import { NextResponse } from "next/server";
 
-const GET = async () => {
+const GET = async (request) => {
   try {
-    const books = await prisma.buku.findMany({
-      orderBy: {
-        judul: "asc",
-      },
-      include: {
-        kategori: true,
-      },
-    });
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get("q");
+    let books;
+    if (query) {
+      books = await prisma.buku.findMany({
+        where: {
+          OR: [
+            {
+              judul: {
+                contains: query,
+              },
+            },
+            {
+              penulis: {
+                contains: query,
+              },
+            },
+          ],
+        },
+        include: {
+          kategori: true,
+        },
+        orderBy: {
+          judul: "asc",
+        },
+      });
+    } else {
+      books = await prisma.buku.findMany({
+        include: {
+          kategori: true,
+        },
+        orderBy: {
+          judul: "asc",
+        },
+      });
+    }
     return NextResponse.json(
       {
         success: true,
-        message: "List Books Datas",
-        data: books,
+        founded: 1,
+        booksList: books,
       },
       {
         status: 200,
       }
     );
   } catch (err) {
-    console.log("Gagal memuat buku", err);
+    console.log("gagal mengambil buku", err);
     return NextResponse.json(
       {
         success: false,
-        message: "Terjadi kesalahan pada server.",
-        data: null,
+        message: "gagal memuat buku",
+        booksList: null,
       },
       {
         status: 500,

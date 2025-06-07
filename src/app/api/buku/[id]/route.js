@@ -21,7 +21,7 @@ export async function GET(request, { params }) {
         {
           success: false,
           message: "Buku tidak ditemukan",
-          data: null,
+          booksList: null,
         },
         { status: 404 }
       );
@@ -30,7 +30,7 @@ export async function GET(request, { params }) {
       {
         success: true,
         message: `Detail buku dengan id ${id}`,
-        data: book,
+        booksList: book,
       },
       { status: 200 }
     );
@@ -61,11 +61,15 @@ export async function PUT(request, { params }) {
 
     const updatedBook = await prisma.buku.update({
       where: { id },
-      data: dataToUpdate,
+      booksList: dataToUpdate,
     });
 
     return NextResponse.json(
-      { success: true, message: "Buku berhasil diperbarui", data: updatedBook },
+      {
+        success: true,
+        message: "Buku berhasil diperbarui",
+        booksList: updatedBook,
+      },
       { status: 200 }
     );
   } catch (err) {

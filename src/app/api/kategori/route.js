@@ -44,7 +44,7 @@ const POST = async (request) => {
     }
 
     const newCategory = await prisma.kategori.create({
-      data: {
+      listCategories: {
         nama,
       },
     });
@@ -53,7 +53,7 @@ const POST = async (request) => {
       {
         success: true,
         message: "Kategori berhasil dibuat",
-        data: newCategory,
+        listCategories: newCategory,
       },
       { status: 201 }
     );
