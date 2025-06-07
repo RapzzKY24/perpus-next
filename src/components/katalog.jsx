@@ -1,7 +1,7 @@
 import React from "react";
 
 function katalog() {
-  return <div>katalog</div>;
+  return <div></div>;
 }
 
 export default katalog;

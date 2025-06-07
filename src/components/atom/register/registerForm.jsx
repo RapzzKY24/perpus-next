@@ -1,24 +1,28 @@
+// File: src/components/RegisterForm.jsx
+
+// FIX 1: Tandai sebagai Client Component dan gunakan import yang benar
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 
-export default function LoginForm() {
+const RegisterForm = () => {
   const [email, setEmail] = useState("");
+  const [nama, setNama] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -27,16 +31,23 @@ export default function LoginForm() {
     setError("");
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, nama, password }),
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Terjadi kesalahan");
-      if (data.success) {
-        localStorage.setItem("token", data.data.token);
-        router.push("/katalog");
+
+      const responseJson = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseJson.message || "Terjadi kesalahan saat mendaftar."
+        );
+      }
+
+      if (responseJson.success) {
+        alert("Pendaftaran berhasil! Silakan login.");
+        router.push("/login");
       }
     } catch (err) {
       setError(err.message);
@@ -48,13 +59,23 @@ export default function LoginForm() {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">Register</CardTitle>
         <CardDescription>
-          Masukkan email dan password Anda untuk masuk.
+          Silakan isi form berikut untuk membuat akun baru.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
+          <div className="grid gap-2">
+            <Label htmlFor="nama">Nama</Label>
+            <Input
+              id="nama"
+              type="text"
+              value={nama}
+              onChange={(e) => setNama(e.target.value)}
+              required
+            />
+          </div>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -73,20 +94,23 @@ export default function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              minLength={6}
             />
           </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? "Loading..." : "Login"}
+            {isLoading ? "Mendaftar..." : "Daftar"}
           </Button>
         </form>
         <div className="mt-4 text-center text-sm">
-          Belum punya akun?{" "}
-          <Link href="/register" className="underline font-semibold">
-            Daftar di sini
+          Sudah punya akun?{" "}
+          <Link href="/login" className="underline font-semibold">
+            Login di sini
           </Link>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default RegisterForm;
