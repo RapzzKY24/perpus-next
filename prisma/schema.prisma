@@ -66,9 +66,20 @@ enum StatusPeminjaman {
 }
 
 
+enum Role {
+  ADMIN
+  MEMBER
+}
+
 model User {
   id         String       @id @default(cuid())
   email      String       @unique
   nama       String
+  password   String
+  role       Role         @default(MEMBER)
+
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
   peminjaman Peminjaman[]
 }
