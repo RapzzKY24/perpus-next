@@ -1,6 +1,3 @@
-// File: src/app/page.js
-
-import BookGrid from "@/components/atom/bookGrid/bookGrid";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -21,7 +18,7 @@ async function getFeaturedBooks() {
 
 export default async function HomePage() {
   const response = await getFeaturedBooks();
-  const featuredBooks = response?.data || [];
+  const featuredBooks = response?.booksList || [];
 
   return (
     <>
@@ -47,7 +44,6 @@ export default async function HomePage() {
           <h2 className="text-3xl font-bold text-center mb-10">
             Buku Unggulan Kami
           </h2>
-          <BookGrid books={featuredBooks} />
         </div>
       </section>
     </>

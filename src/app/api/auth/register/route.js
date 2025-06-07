@@ -36,7 +36,6 @@ export const POST = async (request) => {
         password: hashedPassword,
       },
     });
-    //jangan kirimkan password ke tampilan
     const { password: _, ...userWithoutPassword } = newUser;
     return NextResponse.json(
       {

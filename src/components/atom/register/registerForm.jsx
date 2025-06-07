@@ -1,6 +1,3 @@
-// File: src/components/RegisterForm.jsx
-
-// FIX 1: Tandai sebagai Client Component dan gunakan import yang benar
 "use client";
 
 import { useState } from "react";

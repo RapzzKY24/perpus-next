@@ -1,5 +1,4 @@
 import RegisterForm from "@/components/atom/register/registerForm";
-
 const RegisterPage = () => {
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
