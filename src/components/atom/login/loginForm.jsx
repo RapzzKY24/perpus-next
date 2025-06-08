@@ -35,7 +35,7 @@ export default function LoginForm() {
       if (!res.ok) throw new Error(data.message || "Terjadi kesalahan");
       if (data.success) {
         localStorage.setItem("token", data.data.token);
-        router.push("/katalog");
+        router.push("/");
       }
     } catch (err) {
       setError(err.message);
