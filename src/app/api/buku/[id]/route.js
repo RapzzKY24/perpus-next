@@ -45,41 +45,41 @@ export async function GET(request, { params }) {
 
 export async function PUT(request, { params }) {
   const id = params.id;
+  const body = await request.json();
+  const {
+    judul,
+    penulis,
+    penerbit,
+    tahunTerbit,
+    isbn,
+    jumlahStok,
+    jumlahTersedia,
+    deskripsi,
+    gambarUrl,
+  } = body;
+
   try {
-    const { judul, penerbit, gambarUrl, kategoriIds } = await request.json();
-
-    const dataToUpdate = {};
-    if (judul) dataToUpdate.judul = judul;
-    if (penerbit) dataToUpdate.penerbit = penerbit;
-    if (gambarUrl) dataToUpdate.gambarUrl = gambarUrl;
-
-    if (kategoriIds && Array.isArray(kategoriIds)) {
-      dataToUpdate.kategori = {
-        set: kategoriIds.map((catId) => ({ id: catId })),
-      };
-    }
-
     const updatedBook = await prisma.buku.update({
       where: { id },
-      booksList: dataToUpdate,
+      data: {
+        judul,
+        penulis,
+        penerbit,
+        tahunTerbit,
+        isbn,
+        jumlahStok,
+        jumlahTersedia,
+        deskripsi,
+        gambarUrl,
+      },
     });
 
     return NextResponse.json(
-      {
-        success: true,
-        message: "Buku berhasil diperbarui",
-        booksList: updatedBook,
-      },
+      { success: true, message: "Buku berhasil diperbarui", data: updatedBook },
       { status: 200 }
     );
-  } catch (err) {
-    if (err.code === "P2025") {
-      return NextResponse.json(
-        { success: false, message: "Buku dengan ID tersebut tidak ditemukan." },
-        { status: 404 }
-      );
-    }
-    console.error("Gagal memperbarui buku:", err);
+  } catch (error) {
+    console.error("Gagal memperbarui buku:", error);
     return NextResponse.json(
       { success: false, message: "Terjadi kesalahan pada server." },
       { status: 500 }
